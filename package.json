@@ -15,7 +15,7 @@
     "expres": "^0.0.5",
     "express": "^4.18.2",
     "express-validator": "^6.14.2",
-    "gravatar": "^1.8.2",
+    "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.8.0",
     "request": "^2.88.2"
