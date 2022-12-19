@@ -6,11 +6,12 @@ const connectDB = require('./config/db');
 
 const app = express();
 
+
 //Connect to database
 connectDB();
 
-//init middleware
-// app.use(express.json({ extended: false }));
+//init middleware // it allow us to get the data in request stop body
+ app.use(express.json({ extended: false }));
 
 app.get('/', (req, res) => res.send('Welcome FRAISCH WEBSITE ☺♥'));
 
