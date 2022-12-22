@@ -1,8 +1,6 @@
 // to run : npm run server
 //git commit -m 'Initial commit'
-
 const express = require('express');
-
 const connectDB = require('./config/db');
 
 const app = express();
@@ -23,4 +21,4 @@ app.use('/api/posts', require('./routes/api/posts'));
 
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running at port ${PORT}`));
