@@ -69,11 +69,11 @@ const payload = {
 //log in validation
 jwt.sign( 
   payload,
-   config.get('jwtSecret'),
+   config.get('jwtSecret'), //Token
    {expiresIn:360000},
    (err,token)=>{
     if(err) throw err;
-    res.json({token});
+    res.json({ token });
    });
      
     } catch (err) {
