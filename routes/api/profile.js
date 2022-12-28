@@ -25,7 +25,7 @@ router.get('/me', auth, async (req, res) => {
     res.json(profile);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    return res.status(500).send('Server Error');
   }
 });
 
@@ -37,8 +37,11 @@ router.post(
   [
     auth,
     [
-      check('location', 'is required').not().isEmpty(),
+      check('city', 'is required').not().isEmpty(),
+      check('country', 'is required').not().isEmpty(),
       check('phone_number', 'is required').not().isEmpty(),
+      check('date', 'is required').not().isEmpty(),
+      check('gander', 'is required').not().isEmpty(),
     ],
   ],
   async (req, res) => {
@@ -47,16 +50,17 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
     //check for the body errors
-    const { website, location, phone_number, date } = req.body;
+    const { city, country, phone_number, date ,gander} = req.body;
 
     //Build profile object for profile fields to isert into the database
     const profileField = {};
     //get requist start user when token was sent
     profileField.user = req.user.id;
-    if (website) profileField.website = website;
-    if (location) profileField.location = location;
+    if (city) profileField.website = city; 
+    if (country) profileField.location = country;
     if (phone_number) profileField.phone_number = phone_number;
     if (date) profileField.date = date;
+    if (gander) profileField.date = gander;
 
     // if if have an array of data
     /*if(skils){
@@ -64,7 +68,14 @@ router.post(
     }
     console.log(skills)*/
     console.log(website, location, phone_number, date);
-    res.send('Hello!');
+    return res.send(
+      'Hello!',
+      // profileField.user,
+      // profileField.website,
+      // profileField.location,
+      // profileField.phone_number,
+      //  profileField.date
+    );
 
     try {
       let profile = await Profile.findOne({ user: req.user.id });
@@ -80,11 +91,63 @@ router.post(
       //Create if there's no profile
       profile = new Profile(profileField);
       await profile.save();
-      res.json(profile);
+      return res.json(profile);
     } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server Error');
+      return res.status(500).send('Server Error');
     }
   }
-);
+); 
+
+// @route => Get api/profile
+//@dsec   => Get all profiles
+//@access => public
+router.get('/', async (req, res) => {
+  try {
+    const profiles = await Profile.findOne().populate('user', ['name', 'avatar']);
+    res.json(profiles); 
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route => Get api/profile/user/user:id
+//@dsec   => Get profile by user ID
+//@access => public
+router.get('/user/:user_id', async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.params.user_id}
+    ).populate('user', ['name', 'avatar']);
+    if (!profile)
+      return res.status(400).json({ msg: 'Profile not found' });
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind == 'ObjectId') {
+      return res.status(400).json({ msg: 'Profile not found' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
+// @route => Delete api/profile
+//@dsec   => Delete profile , user& Products
+//@access => privat
+router.delete('/', auth,async (req, res) => {
+  try {
+    //todo-remove users posts
+
+    //remove profile
+    await Profile.findOneAndRemove({ user: req.user.id });
+    //remove user
+    await User.findOneAndRemove({ _id: req.user.id });
+    res.json({msg:'User deleted'}); 
+    
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 module.exports = router;
+
