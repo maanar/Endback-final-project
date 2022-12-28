@@ -70,11 +70,6 @@ router.post(
     console.log(website, location, phone_number, date);
     return res.send(
       'Hello!',
-      // profileField.user,
-      // profileField.website,
-      // profileField.location,
-      // profileField.phone_number,
-      //  profileField.date
     );
 
     try {
