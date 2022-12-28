@@ -5,10 +5,13 @@ const ProfileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
   },
-  website: {
+  // website: {
+  //   type: String,
+  // },
+  city: {
     type: String,
   },
-  location: {
+  country: {
     type: String,
   },
   phone_number: {
@@ -17,7 +20,11 @@ const ProfileSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now,
+  },
+  gander: {
+    type: String,
   }
 });
 
 module.exports = Profile = mongoose.model('profile', ProfileSchema);
+
