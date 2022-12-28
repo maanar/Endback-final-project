@@ -19,6 +19,28 @@ app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/profile', require('./routes/api/profile'));
 app.use('/api/posts', require('./routes/api/posts'));
 
+
+app.get("/api/products", async (req, resp) => {
+  try {
+    const {key,product_name}=req.query
+    const search = key
+      ? {
+          $or: [
+            { product_nam: { $regex: key, $options: '$i' } },
+            { category: { $regex: key, $options: '$i' } },
+          ]
+        }
+      : {}
+    const data = await Products.find(search)
+    res.json({ data })
+  }
+  catch (error) {
+    console.log(error)
+  }
+  
+ })
+ 
+
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => console.log(`Server running at port ${PORT}`));
