@@ -1,4 +1,4 @@
-const Product = require('../models/Product');
+coconst Product = require('../models/Product');
 const shortid = require('shortid');  //ShortId creates amazingly short non-sequential url-friendly unique ids
 const slugify = require('slugify');
 
@@ -33,51 +33,54 @@ let productPictures = [];
          }
     });
 };
-/*
-exports.update = async (req, res) => {
-	const productId = req.params.productId;
 
-	if (req.file !== undefined) {
-		req.body.fileName = req.file.filename;
-	}
-
-	const oldProduct = await Product.findByIdAndUpdate(productId, req.body);
-
-	if (req.file !== undefined && req.file.filename !== oldProduct.fileName) {
-		fs.unlink(`uploads/${oldProduct.fileName}`, err => {
-			if (err) throw err;
-			console.log('Image deleted from the filesystem');
-		});
-	}
-
-	res.json({
-		successMessage: 'Product successfully updated',
-	});
+exports.getProductsBySlug = (req, res) => {
+	const { slug } = req.params;
+	Category.findOne({ slug: slug })
+	  .select("_id type")
+	  .exec((error, category) => {
+		if (error) {
+		  return res.status(400).json({ error });
+		}
+	})
 };
-
-exports.delete = async (req, res) => {
-	try {
-		const productId = req.params.productId;
-		const deletedProduct = await Product.findByIdAndDelete(productId);
-
-		fs.unlink(`uploads/${deletedProduct.fileName}`, err => {
-			if (err) throw err;
-			console.log(
-				'Img successfully deleted from filesystem: ',
-				deletedProduct.fileName
-			);
-		});
-
-		res.json(deletedProduct);
-	} catch (err) {
-		console.log(err, 'productController.delete error');
-		res.status(500).json({
-			errorMessage: 'Please try again later',
-		});
+		
+			
+  
+  exports.getProductDetailsById = (req, res) => {
+	const { productId } = req.params;
+	if (productId) {
+	  Product.findOne({ _id: productId }).exec((error, product) => {
+		if (error) return res.status(400).json({ error });
+		if (product) {
+		  res.status(200).json({ product });
+		}
+	  });
+	} else {
+	  return res.status(400).json({ error: "Params required" });
 	}
-};
-*/
-
-
-//another  way to update product in file product in routes
-//another  way to delete product in file product in routes
+  };
+  
+  // new update
+  exports.deleteProductById = (req, res) => {
+	const { productId } = req.body.payload;
+	if (productId) {
+	  Product.deleteOne({ _id: productId }).exec((error, result) => {
+		if (error) return res.status(400).json({ error });
+		if (result) {
+		  res.status(202).json({ result });
+		}
+	  });
+	} else {
+	  res.status(400).json({ error: "Params required" });
+	}
+  };
+  
+  exports.getProducts = async (req, res) => {
+	const products = await Product.find({ createdBy: req.user._id })
+	  .select("_id name price quantity slug description productPictures category")
+	  .populate({ path: "category", select: "_id name" })
+	  .exec();
+  
+	res.status(200).json({ products });
+  };
