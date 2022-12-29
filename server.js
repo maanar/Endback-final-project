@@ -14,6 +14,9 @@ const authRoutes =require('./routes/api/auth');
 const productRoutes =require('./routes/api/product');
 const profileRoutes = require('./routes/api/profile');
 const userRoutes =require('./routes/api/users');
+const categoryRoutes =require('./routes/api/category');
+
+const cartRoutes =require('./routes/api/cart');
 */
 //Connect to database
 connectDB();
@@ -30,6 +33,9 @@ app.use('/users', userRoutes);
 app.use('/auth',  authRoutes);
 app.use('/profile', profileRoutes);  
 app.use('/product' , productRoutes);
+app.use('/category' , categoryRoutes);   
+app.use('/cart' , cartRoutes);   
+
 
 */
 
